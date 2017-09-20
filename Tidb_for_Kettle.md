@@ -9,7 +9,7 @@
 # 测试环境 #
 
 
-&emsp;&emsp;Kettle 部署环境
+**&emsp;&emsp;Kettle 部署环境**
 
 | 名称    | Win   |  Linux  |
 | ------- | -----:| :----: |
@@ -19,7 +19,7 @@
 | mysql | 5.6    | 5.6 |
 
 
-&emsp;&emsp;TiDB本地测试环境(Centos 7.3  4台虚拟机)
+**&emsp;&emsp;TiDB本地测试环境 (Centos7.3  4台虚拟机)**
 
 |Name	|Host IP	|Services |
 | --------  | -----:   | :----: |
@@ -32,12 +32,13 @@
 
 
 # 详细测试 #
+测试数据基于TPCH测试模型，详细表结构参见附件。
 ### 1、配置TiDB为资源库 [JDBC] ###
 1. 解压Kettle到本地目录：D:\data-integration，从MySQL下载mysql-connector-java驱动包,解压后将对应的jar包copy到D:\data-integration\lib下;
 2. 启动Kettle(spoon.bat)，如下图所示，主要有2中任务，一个是作业，一个是转换。一般来说，转换是一系列具体的操作，比如：调度SP，导出Excel等等；作业，就是按照一定流程来调度一系列转换。
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k01.jpg)
 
-3. 资源库用户的创建
+3. TidDB资源库用户的创建
 ```
 mysql -uroot -h 192.168.100.160 -P 4000
 >> create database resource;
@@ -47,11 +48,13 @@ mysql -uroot -h 192.168.100.160 -P 4000
 mysql -ukettle -p111111 -h 192.168.100.160 -P 4000
 >> show databases;
 ```
-4. 资源库配置，点击右上角connect，进入Pentaho Repository，选择Other Repositories --> Database Repository --> Get Started
+4. TiDB资源库配置，点击右上角connect，进入Pentaho Repository，选择Other Repositories --> Database Repository --> Get Started
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k02.jpg)
 --> Database Connection 配置如下
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/03.jpg)
 点击测试，成功连接数据库。
+
+&emsp;&emsp;注：ETL过程各个模块数据库连接可按照此方式配置调用
 
 5. 查看资源库
 ```
@@ -86,6 +89,73 @@ ODBC链接TiDB测试通过。
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k05.jpg)
 
 ### 3、功能测试 ###
-1. 准备测试数据表，测试数据;
-2. 数据加载测试【Excel，文本文件】
-3. 
+
+**1. 导入导出测试**
+- SQL脚本创建数据表 -> 调用加载脚本 -> Excel导出本地
+
+选择脚本-> SQL脚本
+![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k07.jpg)
+
+输入->文本文件输入
+![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k08.jpg)
+![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k09.jpg)
+
+输出->表输出
+![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k10.jpg)
+
+
+**2. 数据同步测试**
+
+
+### 4、测试总结 ###
+
+
+### 5、错误跟踪 ###
+```
+---------------------------------------错误信息------------------------------------
+java.lang.reflect.InvocationTargetException: 从数据库中获取信息时发生错误: org.pentaho.di.core.exception.KettleDatabaseException: 
+因为错误不能提取数据库信息
+
+Unable to get list of procedures from database meta-data: 
+Communications link failure due to underlying exception: 
+
+** BEGIN NESTED EXCEPTION ** 
+
+java.io.EOFException
+MESSAGE: Can not read response from server. Expected to read 4 bytes, read 0 bytes before connection was unexpectedly lost.
+
+STACKTRACE:
+
+java.io.EOFException: Can not read response from server. Expected to read 4 bytes, read 0 bytes before connection was unexpectedly lost.
+	at com.mysql.jdbc.MysqlIO.readFully(MysqlIO.java:1997)
+	at com.mysql.jdbc.MysqlIO.reuseAndReadPacket(MysqlIO.java:2411)
+	at com.mysql.jdbc.MysqlIO.checkErrorPacket(MysqlIO.java:2916)
+	at com.mysql.jdbc.MysqlIO.sendCommand(MysqlIO.java:1631)
+	at com.mysql.jdbc.MysqlIO.sqlQueryDirect(MysqlIO.java:1723)
+	at com.mysql.jdbc.Connection.execSQL(Connection.java:3283)
+	at com.mysql.jdbc.PreparedStatement.executeInternal(PreparedStatement.java:1332)
+	at com.mysql.jdbc.PreparedStatement.executeQuery(PreparedStatement.java:1467)
+	at com.mysql.jdbc.DatabaseMetaData$8.forEach(DatabaseMetaData.java:4183)
+	at com.mysql.jdbc.DatabaseMetaData$IterateBlock.doForAll(DatabaseMetaData.java:76)
+	at com.mysql.jdbc.DatabaseMetaData.getProceduresAndOrFunctions(DatabaseMetaData.java:4120)
+	at com.mysql.jdbc.DatabaseMetaData.getProcedures(DatabaseMetaData.java:4084)
+	at org.pentaho.di.core.database.Database.getProcedures(Database.java:4052)
+	at org.pentaho.di.core.database.DatabaseMetaInformation.getData(DatabaseMetaInformation.java:406)
+	at org.pentaho.di.ui.core.database.dialog.GetDatabaseInfoProgressDialog$1.run(GetDatabaseInfoProgressDialog.java:65)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:113)
+
+
+** END NESTED EXCEPTION **
+
+
+
+Last packet sent to the server was 1 ms ago.
+
+
+	at org.pentaho.di.ui.core.database.dialog.GetDatabaseInfoProgressDialog$1.run(GetDatabaseInfoProgressDialog.java:67)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:113)
+Caused by: org.pentaho.di.core.exception.KettleDatabaseException: 
+因为错误不能提取数据库信息
+---------------------------------------错误原因------------------------------------
+通过Ketlle界面按钮获取数据库配置需要读取Database的Schema、表、视图、同义词等信息，通过MySQL JDBC 调用TiDB加载该类信息报错，直接填写表信息无问题。
+```
