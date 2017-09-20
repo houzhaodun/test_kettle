@@ -49,9 +49,13 @@ mysql -ukettle -p111111 -h 192.168.100.160 -P 4000
 >> show databases;
 ```
 4. TiDB资源库配置，点击右上角connect，进入Pentaho Repository，选择Other Repositories --> Database Repository --> Get Started
+
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k02.jpg)
+
 --> Database Connection 配置如下
+
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/03.jpg)
+
 点击测试，成功连接数据库。
 
 &emsp;&emsp;注：ETL过程各个模块数据库连接可按照此方式配置调用
@@ -78,6 +82,7 @@ MySQL [resource]> show tables;
 1、官网下载Mysql ODBC并安装。
 
 2、控制面板-> 管理工具 -> ODBC 数据源（64位）
+
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k06.jpg)
 
 服务端对应TiDB数据库为UTF-8，所以选择ODBC驱动的的时候请注意，否则报错如下：
@@ -94,14 +99,21 @@ ODBC链接TiDB测试通过。
 - SQL脚本创建数据表 -> 调用加载脚本 -> Excel导出本地
 
 选择脚本-> SQL脚本
+
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k07.jpg)
 
 输入->文本文件输入
+
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k08.jpg)
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k09.jpg)
 
 输出->表输出
+
 ![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k10.jpg)
+
+输出 -> Excel输出 -> 设置各个流程转换关系 -> 执行调用 -> 检查数据库表数据及本地Excel文件
+
+![image](https://github.com/houzhaodun/test_kettle/raw/master/kettle-test/k11.jpg)
 
 
 **2. 数据同步测试**
